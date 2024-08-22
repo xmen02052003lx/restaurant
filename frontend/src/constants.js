@@ -1,0 +1,8 @@
+export const BASE_URL = ""
+export const MENU_URL = "/menu"
+export const USERS_URL = "/user"
+export const BOOKING_URL = "/booking"
+export const RESTAURANT_URL = "/restaurant"
+export const CHECKIN_URL = "/checkin"
+export const PICKUP_URL = "/pickup"
+export const BILLS_URL = "/bill"

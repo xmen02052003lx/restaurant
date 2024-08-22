@@ -1,0 +1,6 @@
+combine "pet-shop" and "restaurant-reservation-app" together
+
+things to change:
+-restructure API and folder structure of datbannhahang's backend properly and combine it to pet-shop
+-add authorization functionality to "pet-shop"
+restructure pet-shop to add more functionality of "restaurant-reservation-app"
