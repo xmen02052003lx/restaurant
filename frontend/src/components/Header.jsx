@@ -99,6 +99,9 @@ const Header = () => {
                 <LinkContainer to="/manager/orderlist">
                   <NavDropdown.Item>Orders</NavDropdown.Item>
                 </LinkContainer>
+                <LinkContainer to="/manager/userlist">
+                  <NavDropdown.Item>Quản lý users</NavDropdown.Item>
+                </LinkContainer>
               </NavDropdown>
             )}
           </Navbar.Collapse>

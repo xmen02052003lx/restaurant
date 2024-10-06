@@ -33,6 +33,8 @@ import MenuList from "./screens/admin/MenuList"
 import MenuEditScreen from "./screens/admin/MenuEditScreen"
 import OrderListScreen from "./screens/admin/OrderListScreen"
 import OrderDetailScreen from "./screens/admin/OrderDetailScreen"
+import UserListScreen from "./screens/admin/UserListScreen"
+import UserEditScreen from "./screens/admin/UserEditScreen"
 import DeliveryScreen from "./screens/DeliveryScreen"
 import ShippingScreen from "./screens/ShippingScreen"
 import ProfileScreen from "./screens/ProfileScreen"
@@ -67,6 +69,8 @@ const router = createBrowserRouter(
           path="/manager/restaurant"
           element={<RestaurantInfoEditScreen />}
         />
+        <Route path="/admin/user/:id/edit" element={<UserEditScreen />} />
+        <Route path="/manager/userlist" element={<UserListScreen />} />
         <Route path="/manager/createmenu" element={<MenuCreateScreen />} />
         <Route path="/manager/tablelist" element={<TableListScreen />} />
         <Route path="/manager/bookingslist" element={<BookingListScreen />} />
