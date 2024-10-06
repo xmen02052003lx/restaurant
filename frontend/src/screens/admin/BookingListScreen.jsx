@@ -4,7 +4,7 @@ import { Table, Button, Container } from "react-bootstrap"
 import { FaTimes } from "react-icons/fa"
 import Message from "../../components/Message"
 import Loader from "../../components/Loader"
-import { useGetBookingsQuery } from "../../slices/bookingApiSlice"
+import { useGetBookingsQuery } from "../../slices/eatInApiSlice"
 
 const BookingsListScreen = () => {
   const { data: bookings, isLoading, error } = useGetBookingsQuery()

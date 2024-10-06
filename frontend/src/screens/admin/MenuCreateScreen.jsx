@@ -4,19 +4,22 @@ import { Form, Button } from "react-bootstrap"
 import Loader from "../../components/Loader"
 import FormContainer from "../../components/FormContainer"
 import { toast } from "react-toastify"
-import { useCreateMenuMutation } from "../../slices/menuApiSlice"
+import {
+  useGetProductsQuery,
+  useDeleteProductMutation,
+  useCreateProductMutation
+} from "../../slices/productsApiSlice"
+// import { useCreateMenuMutation } from "../../slices/menuApiSlice"
 
 const MenuCreateScreen = () => {
   const [image, setImage] = useState(null)
 
   const [formData, setFormData] = useState({
-    dish_code: "",
     name: "",
     category: "food",
     description: "",
     unit: "dĩa",
-    price: "",
-    discount: ""
+    price: ""
   })
 
   const [errors, setErrors] = useState({})
@@ -40,13 +43,6 @@ const MenuCreateScreen = () => {
     const success = {}
 
     switch (name) {
-      case "dish_code":
-        if (!value) {
-          errors.dish_code = "Dish code is required"
-        } else {
-          success.dish_code = "Dish code looks good!"
-        }
-        break
       case "name":
         if (!value) {
           errors.name = "Name is required"
@@ -63,14 +59,7 @@ const MenuCreateScreen = () => {
           success.price = "Price looks good!"
         }
         break
-      case "discount":
-        if (isNaN(value) || value < 0 || value > 100) {
-          errors.discount =
-            "Discount must be a non-negative number and equal to or less than 100"
-        } else {
-          success.discount = "Discount looks good!"
-        }
-        break
+
       case "category":
         if (!value) {
           errors.category = "Category is required"
@@ -100,7 +89,8 @@ const MenuCreateScreen = () => {
     setSuccess(prev => ({ ...prev, [name]: success[name] }))
   }
 
-  const [createMenu, { isLoading: loadingCreate }] = useCreateMenuMutation()
+  const [createProduct, { isLoading: loadingCreate }] =
+    useCreateProductMutation()
 
   const navigate = useNavigate()
 
@@ -112,8 +102,16 @@ const MenuCreateScreen = () => {
         formDataWithImage.append(key, formData[key])
       }
       formDataWithImage.append("image", image)
+      console.log("formDataWithImage", formDataWithImage)
+      console.log("image", image)
+      // Log the values of formDataWithImage
+      console.log("FormDataWithImage contents:")
+      for (let pair of formDataWithImage.entries()) {
+        console.log(`${pair[0]}: ${pair[1]}`)
+      }
+      console.log("FormDataWithImage entries:", formDataWithImage.entries())
       try {
-        await createMenu(formDataWithImage).unwrap()
+        await createProduct(formDataWithImage).unwrap()
         toast.success("Item added")
         navigate("/manager/menu")
       } catch (err) {
@@ -132,28 +130,6 @@ const MenuCreateScreen = () => {
         {loadingCreate && <Loader />}
 
         <Form onSubmit={handleSubmit}>
-          <Form.Group controlId="dish_code">
-            <Form.Label>Dish_code</Form.Label>
-            <Form.Control
-              name="dish_code"
-              type="text"
-              placeholder="Enter Dish_code"
-              value={formData.dish_code}
-              onChange={handleChange}
-              isInvalid={!!errors.dish_code}
-              isValid={!!success.dish_code}
-            ></Form.Control>
-            {errors.dish_code && (
-              <Form.Control.Feedback type="invalid">
-                {errors.dish_code}
-              </Form.Control.Feedback>
-            )}
-            {success.dish_code && (
-              <Form.Control.Feedback type="valid">
-                {success.dish_code}
-              </Form.Control.Feedback>
-            )}
-          </Form.Group>
           <Form.Group controlId="name">
             <Form.Label>Name</Form.Label>
             <Form.Control
@@ -196,28 +172,6 @@ const MenuCreateScreen = () => {
             {success.price && (
               <Form.Control.Feedback type="valid">
                 {success.price}
-              </Form.Control.Feedback>
-            )}
-          </Form.Group>
-          <Form.Group controlId="discount">
-            <Form.Label>Discount</Form.Label>
-            <Form.Control
-              name="discount"
-              type="text"
-              placeholder="Enter discount"
-              value={formData.discount}
-              onChange={handleChange}
-              isInvalid={!!errors.discount}
-              isValid={!!success.discount}
-            ></Form.Control>
-            {errors.discount && (
-              <Form.Control.Feedback type="invalid">
-                {errors.discount}
-              </Form.Control.Feedback>
-            )}
-            {success.discount && (
-              <Form.Control.Feedback type="valid">
-                {success.discount}
               </Form.Control.Feedback>
             )}
           </Form.Group>

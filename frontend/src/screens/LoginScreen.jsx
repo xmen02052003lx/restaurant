@@ -1,6 +1,6 @@
 import "./LoginScreen.css"
 import { useState, useEffect } from "react"
-import { useLocation, useNavigate } from "react-router-dom"
+import { useLocation, useNavigate, Link } from "react-router-dom"
 import { Form, Row, Col } from "react-bootstrap"
 import { useDispatch, useSelector } from "react-redux"
 import Loader from "../components/Loader"
@@ -10,7 +10,7 @@ import { setCredentials } from "../slices/authSlice"
 import { toast } from "react-toastify"
 
 const LoginScreen = () => {
-  const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [errors, setErrors] = useState({})
   const [success, setSuccess] = useState({})
@@ -38,18 +38,18 @@ const LoginScreen = () => {
   const validate = () => {
     const errors = {}
     const success = {}
-    if (!username) {
-      errors.username = "Email is required"
-    } else if (!/\S+@\S+\.\S+/.test(username)) {
-      errors.username = "Email address is invalid"
+    if (!email) {
+      errors.email = "Email is required"
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      errors.email = "Email address is invalid"
     } else {
-      success.username = "Email looks good!"
+      success.email = "Email looks good!"
     }
 
     if (!password) {
       errors.password = "Password is required"
     } else if (password.length < 6) {
-      errors.password = "Password must be at least 8 characters"
+      errors.password = "Password must be at least 6 characters"
     } else {
       success.password = "Password looks good!"
     }
@@ -66,19 +66,23 @@ const LoginScreen = () => {
       return
     }
     try {
-      const res = await login({ username, password }).unwrap()
+      console.log(email)
+      console.log(password)
+      const res = await login({ email, password }).unwrap()
       dispatch(setCredentials({ ...res }))
       navigate(redirect)
     } catch (err) {
-      toast.error("Wrong email or password")
+      toast.error(err?.data?.message || err.error)
+
+      // toast.error("Wrong email or password")
     }
   }
 
-  const handleUsernameChange = e => {
-    setUsername(e.target.value)
+  const handleEmailChange = e => {
+    setEmail(e.target.value)
     const { errors, success } = validate()
-    setErrors(prev => ({ ...prev, username: errors.username }))
-    setSuccess(prev => ({ ...prev, username: success.username }))
+    setErrors(prev => ({ ...prev, email: errors.email }))
+    setSuccess(prev => ({ ...prev, email: success.email }))
   }
 
   const handlePasswordChange = e => {
@@ -103,19 +107,19 @@ const LoginScreen = () => {
                 <Form.Control
                   type="email"
                   placeholder="Enter email"
-                  value={username}
-                  onChange={handleUsernameChange}
-                  isInvalid={!!errors.username}
-                  isValid={!!success.username}
+                  value={email}
+                  onChange={handleEmailChange}
+                  isInvalid={!!errors.email}
+                  isValid={!!success.email}
                 ></Form.Control>
-                {errors.username && (
+                {errors.email && (
                   <Form.Control.Feedback type="invalid">
-                    {errors.username}
+                    {errors.email}
                   </Form.Control.Feedback>
                 )}
-                {success.username && (
+                {success.email && (
                   <Form.Control.Feedback type="valid">
-                    {success.username}
+                    {success.email}
                   </Form.Control.Feedback>
                 )}
               </Form.Group>
@@ -152,6 +156,16 @@ const LoginScreen = () => {
 
               {isLoading && <Loader />}
             </Form>
+          </Col>
+        </Row>
+        <Row className="py-3">
+          <Col>
+            New Customer?{" "}
+            <Link
+              to={redirect ? `/register?redirect=${redirect}` : "/register"}
+            >
+              Register
+            </Link>
           </Col>
         </Row>
       </FormContainer>

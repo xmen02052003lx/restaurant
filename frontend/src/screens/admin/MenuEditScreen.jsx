@@ -1,25 +1,32 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { Form, Button } from "react-bootstrap"
 import Loader from "../../components/Loader"
 import FormContainer from "../../components/FormContainer"
 import { toast } from "react-toastify"
-import { useUpdateMenuMutation } from "../../slices/menuApiSlice"
+import {
+  useUpdateProductMutation,
+  useGetProductDetailsQuery
+} from "../../slices/productsApiSlice"
 
 const MenuEditScreen = () => {
-  const { id: menuId } = useParams()
-
+  const { id: productId } = useParams()
   const [image, setImage] = useState(null)
 
   const [formData, setFormData] = useState({
-    dish_code: "",
     name: "",
     category: "food",
     description: "",
     unit: "dĩa",
-    price: "",
-    discount: ""
+    price: ""
   })
+
+  const {
+    data: product,
+    isLoading,
+    refetch,
+    error
+  } = useGetProductDetailsQuery(productId)
 
   const [errors, setErrors] = useState({})
   const [success, setSuccess] = useState({})
@@ -49,14 +56,6 @@ const MenuEditScreen = () => {
           success.price = "Price looks good!"
         }
         break
-      case "discount":
-        if (isNaN(value) || value < 0 || value > 100) {
-          errors.discount =
-            "Discount must be a non-negative number and equal to or less than 100"
-        } else {
-          success.discount = "Discount looks good!"
-        }
-        break
 
       default:
         break
@@ -66,8 +65,8 @@ const MenuEditScreen = () => {
     setSuccess(prev => ({ ...prev, [name]: success[name] }))
   }
 
-  const [updateMenu, { isLoading: loadingUpdate }] = useUpdateMenuMutation()
-
+  const [updateProduct, { isLoading: loadingUpdate }] =
+    useUpdateProductMutation(productId)
   const navigate = useNavigate()
 
   const handleSubmit = async e => {
@@ -77,16 +76,14 @@ const MenuEditScreen = () => {
       formDataWithImage.append(key, formData[key])
     }
     formDataWithImage.append("image", image)
-    formDataWithImage.append("_id", menuId)
+    formDataWithImage.append("productId", productId)
     // Convert FormData to object
     const formDataObj = {}
     formDataWithImage.forEach((value, key) => {
       formDataObj[key] = value
     })
-    console.log(formDataObj)
-    console.log(formDataObj._id)
     try {
-      await updateMenu(formDataObj).unwrap() // NOTE: here we need to unwrap the Promise to catch any rejection in our catch block
+      await updateProduct(formDataWithImage).unwrap() // NOTE: here we need to unwrap the Promise to catch any rejection in our catch block
       toast.success("Menu updated")
       navigate("/manager/menu")
     } catch (err) {
@@ -94,25 +91,28 @@ const MenuEditScreen = () => {
     }
   }
 
+  useEffect(() => {
+    if (product) {
+      setFormData({
+        name: product.name || "",
+        category: product.category || "food",
+        description: product.description || "",
+        unit: product.unit || "dĩa",
+        price: product.price || ""
+      })
+      setImage(product.image || null)
+    }
+  }, [product])
+
   return (
     <>
       <Link to="/manager/menu" className="btn btn-light my-3">
         Go Back
       </Link>
       <FormContainer>
-        <h1>Edit Menu</h1>
+        <h1>Edit Product</h1>
 
         <Form onSubmit={handleSubmit}>
-          <Form.Group controlId="dish_code">
-            <Form.Label>Dish_code</Form.Label>
-            <Form.Control
-              name="dish_code"
-              type="text"
-              placeholder="Enter Dish_code"
-              value={formData.dish_code}
-              onChange={handleChange}
-            ></Form.Control>
-          </Form.Group>
           <Form.Group controlId="name">
             <Form.Label>Name</Form.Label>
             <Form.Control
@@ -143,28 +143,6 @@ const MenuEditScreen = () => {
             {success.price && (
               <Form.Control.Feedback type="valid">
                 {success.price}
-              </Form.Control.Feedback>
-            )}
-          </Form.Group>
-          <Form.Group controlId="discount">
-            <Form.Label>Discount</Form.Label>
-            <Form.Control
-              name="discount"
-              type="text"
-              placeholder="Enter discount"
-              value={formData.discount}
-              onChange={handleChange}
-              isInvalid={!!errors.discount}
-              isValid={!!success.discount}
-            ></Form.Control>
-            {errors.discount && (
-              <Form.Control.Feedback type="invalid">
-                {errors.discount}
-              </Form.Control.Feedback>
-            )}
-            {success.discount && (
-              <Form.Control.Feedback type="valid">
-                {success.discount}
               </Form.Control.Feedback>
             )}
           </Form.Group>
@@ -220,7 +198,7 @@ const MenuEditScreen = () => {
             Update
           </Button>
         </Form>
-        {loadingUpdate && <Loader />}
+        {/* {loadingUpdate && <Loader />} */}
       </FormContainer>
     </>
   )

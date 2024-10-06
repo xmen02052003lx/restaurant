@@ -1,5 +1,10 @@
 import asyncHandler from "../middleware/asyncHandler.js"
 import Product from "../models/productModel.js"
+// import multer from "multer"
+
+// // Configure multer storage
+// const storage = multer.memoryStorage() // Store the file in memory
+// const upload = multer({ storage: storage })
 
 // @desc Fetch all products
 // @route GET /api/products
@@ -48,16 +53,19 @@ const getProductById = asyncHandler(async (req, res) => {
 // @route   POST /api/products
 // @access  Private/Admin
 const createProduct = asyncHandler(async (req, res) => {
+  const { name, category, description, unit, price } = req.body
   const product = new Product({
-    name: "Sample name",
-    price: 0,
+    name,
+    price,
     user: req.user._id,
-    image: "/images/sample.jpg",
-    brand: "Sample brand",
-    category: "Sample category",
-    countInStock: 0,
-    numReviews: 0,
-    description: "Sample description"
+    category,
+    description,
+    unit,
+    image: {
+      data: req.file.buffer.toString("base64"),
+      contentType: req.file.mimetype
+    },
+    numReviews: 0
   })
 
   const createdProduct = await product.save()
@@ -68,16 +76,24 @@ const createProduct = asyncHandler(async (req, res) => {
 // @route   PUT /api/products/:id
 // @access  Private/Admin
 const updateProduct = asyncHandler(async (req, res) => {
-  const { name, price, description, image, brand, category, countInStock } =
-    req.body
+  const { name, price, description, brand, category, countInStock } = req.body
+  // Extract the image from req.file if it exists
+  let image = req.file
+    ? {
+        data: req.file.buffer.toString("base64"),
+        contentType: req.file.mimetype
+      }
+    : undefined
 
   const product = await Product.findById(req.params.id)
+
+  console.log("req.params.id", req.params.id)
 
   if (product) {
     product.name = name
     product.price = price
     product.description = description
-    product.image = image
+    product.image = image || product.image
     product.brand = brand
     product.category = category
     product.countInStock = countInStock

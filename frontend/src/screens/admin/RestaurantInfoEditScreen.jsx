@@ -11,15 +11,16 @@ import {
 } from "../../slices/restaurantApiSlice"
 
 const ProductEditScreen = () => {
-  const { id: restaurantId } = useParams()
   const [restaurant, setRestaurant] = useState({
     name: "",
     address: "",
     openTime: "",
     closeTime: "",
     description: "",
-    images: [],
-    number_table: 0
+    image: "",
+    tableCount: 0,
+    phone: "",
+    email: ""
   })
 
   const navigate = useNavigate()
@@ -29,7 +30,7 @@ const ProductEditScreen = () => {
     isLoading,
     refetch,
     error
-  } = useGetRestaurantDetailsQuery(restaurantId)
+  } = useGetRestaurantDetailsQuery()
 
   useEffect(() => {
     if (restaurantDetails) {
@@ -52,7 +53,7 @@ const ProductEditScreen = () => {
       toast.success("Restaurant's details updated")
       console.log(restaurant)
       refetch()
-      // navigate("/")
+      navigate("/")
     } catch (err) {
       toast.error(err?.data?.message || err.error)
     }
@@ -121,7 +122,7 @@ const ProductEditScreen = () => {
               />
             </Form.Group>
 
-            <Form.Group controlId="images">
+            {/* <Form.Group controlId="images">
               <Form.Label>Images</Form.Label>
               <Form.Control
                 type="text"
@@ -134,15 +135,36 @@ const ProductEditScreen = () => {
                   })
                 }
               />
-            </Form.Group>
+            </Form.Group> */}
 
-            <Form.Group controlId="number_table">
+            <Form.Group controlId="tableCount">
               <Form.Label>Table Count</Form.Label>
               <Form.Control
                 type="number"
-                name="number_table"
-                value={restaurant.number_table}
+                name="tableCount"
+                value={restaurant.tableCount}
                 onChange={handleChange}
+              />
+            </Form.Group>
+
+            <Form.Group controlId="phone">
+              <Form.Label>SĐT</Form.Label>
+              <Form.Control
+                type="text"
+                name="phone"
+                value={restaurant.phone}
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
+            <Form.Group controlId="email">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="text"
+                name="email"
+                value={restaurant.email}
+                onChange={handleChange}
+                required
               />
             </Form.Group>
 

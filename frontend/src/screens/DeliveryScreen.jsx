@@ -2,14 +2,16 @@ import { useParams, Link } from "react-router-dom"
 import { Row, Col, Container } from "react-bootstrap"
 import Loader from "../components/Loader"
 import MenuItem from "../components/MenuItem"
-import { useGetMenuQuery } from "../slices/menuApiSlice"
+// import { useGetMenuQuery } from "../slices/menuApiSlice"
+import { useGetProductsQuery } from "../slices/productsApiSlice"
 import PlaceOrder from "../components/PlaceOrder"
 import "./ThucDonScreen.css"
 const MenuScreen = () => {
   const { checkinUrl } = useParams() // come from the URL
   console.log(checkinUrl)
 
-  const { data: products, isLoading } = useGetMenuQuery()
+  const { data: obj, isLoading } = useGetProductsQuery()
+  let products = obj?.products
 
   const foodProducts = products?.filter(product => product.category === "food")
   const drinkProducts = products?.filter(

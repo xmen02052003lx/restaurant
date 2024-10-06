@@ -5,35 +5,21 @@ import { useParams } from "react-router-dom"
 import Message from "../../components/Message"
 import Loader from "../../components/Loader"
 import {
-  useGetMenuQuery,
-  useCreateMenuMutation,
-  useUpdateMenuMutation,
-  useDeleteMenuMutation
-} from "../../slices/menuApiSlice"
+  useGetProductsQuery,
+  useDeleteProductMutation
+} from "../../slices/productsApiSlice"
 import { toast } from "react-toastify"
 
 const MenuList = () => {
-  const { data: menu, isLoading, error, refetch } = useGetMenuQuery()
-
-  const [deleteMenu, { isLoading: loadingDelete }] = useDeleteMenuMutation()
+  const { data: obj, isLoading, error, refetch } = useGetProductsQuery()
+  let products = obj?.products
+  const [deleteProduct, { isLoading: loadingDelete }] =
+    useDeleteProductMutation()
 
   const deleteHandler = async id => {
     if (window.confirm("Are you sure")) {
       try {
-        await deleteMenu(id)
-        refetch()
-      } catch (err) {
-        toast.error(err?.data?.message || err.error)
-      }
-    }
-  }
-
-  const [createMenu, { isLoading: loadingCreate }] = useCreateMenuMutation()
-
-  const createProductHandler = async () => {
-    if (window.confirm("Are you sure you want to create a new product?")) {
-      try {
-        await createMenu()
+        await deleteProduct(id)
         refetch()
       } catch (err) {
         toast.error(err?.data?.message || err.error)
@@ -57,7 +43,6 @@ const MenuList = () => {
           </Col>
         </Row>
 
-        {loadingCreate && <Loader />}
         {loadingDelete && <Loader />}
         {isLoading ? (
           <Loader />
@@ -77,7 +62,7 @@ const MenuList = () => {
                 </tr>
               </thead>
               <tbody>
-                {menu.map(item => (
+                {products.map(item => (
                   <tr key={item._id}>
                     <td>{item._id}</td>
                     <td>{item.name}</td>

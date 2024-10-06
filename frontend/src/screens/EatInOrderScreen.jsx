@@ -1,33 +1,32 @@
-import { Link } from "react-router-dom"
+import { useParams, Link } from "react-router-dom"
 import { Row, Col, Container } from "react-bootstrap"
 import Loader from "../components/Loader"
 import MenuItem from "../components/MenuItem"
-// import { useGetMenuQuery } from "../slices/menuApiSlice"
 import { useGetProductsQuery } from "../slices/productsApiSlice"
+import EatinPlaceOrder from "../components/EatinPlaceOrder"
 import "./ThucDonScreen.css"
 const MenuScreen = () => {
+  const { checkinUrl } = useParams() // come from the URL
+  console.log(checkinUrl)
+
   const { data: obj, isLoading } = useGetProductsQuery()
   let products = obj?.products
-
-  console.log("obj", obj)
-  console.log("products", products)
 
   const foodProducts = products?.filter(product => product.category === "food")
   const drinkProducts = products?.filter(
     product => product.category === "drinks"
   )
-
   const renderProductRows = products => {
     const rows = []
     for (let i = 0; i < products.length; i += 2) {
       rows.push(
         <Row key={i}>
           <Col md={6}>
-            <MenuItem product={products[i]} justShow={true} />
+            <MenuItem product={products[i]} />
           </Col>
           {i + 1 < products.length && (
             <Col md={6}>
-              <MenuItem product={products[i + 1]} justShow={true} />
+              <MenuItem product={products[i + 1]} />
             </Col>
           )}
         </Row>
@@ -35,6 +34,8 @@ const MenuScreen = () => {
     }
     return rows
   }
+
+  console.log("Products inside eatin:", products)
 
   return (
     <>
@@ -48,11 +49,16 @@ const MenuScreen = () => {
       ) : (
         <Container>
           <Row>
-            <h2 className="menu-header">Food</h2>
-            {renderProductRows(foodProducts)}
+            <Col md={4}>
+              <EatinPlaceOrder checkinUrl={checkinUrl} />
+            </Col>
+            <Col md={8}>
+              <h2 className="menu-header">Food</h2>
+              {renderProductRows(foodProducts)}
 
-            <h2 className="menu-header">Drinks</h2>
-            {renderProductRows(drinkProducts)}
+              <h2 className="menu-header">Drinks</h2>
+              {renderProductRows(drinkProducts)}
+            </Col>
           </Row>
         </Container>
       )}

@@ -29,6 +29,8 @@ const addOrderItems = asyncHandler(async (req, res) => {
       const matchingItemFromDB = itemsFromDB.find(
         itemFromDB => itemFromDB._id.toString() === itemFromClient._id
       )
+      // **** Check itemFromClient if image is string
+      // console.log("itemFromClient", itemFromClient)
       return {
         ...itemFromClient, // name, qty, image
         product: itemFromClient._id, // because the itemFromClient dont have this field so we have to do this step: add it to this dbOrderItems object

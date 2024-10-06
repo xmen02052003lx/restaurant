@@ -1,17 +1,19 @@
 import { useState, useEffect } from "react"
-import { Link, useLocation, useNavigate } from "react-router-dom"
-import { Form, Button, Row, Col, Nav } from "react-bootstrap"
-import { useDispatch, useSelector } from "react-redux"
-import Loader from "../../components/Loader"
-import FormContainer from "../../components/FormContainer"
+import { useLocation, useNavigate } from "react-router-dom"
 import { LinkContainer } from "react-router-bootstrap"
+import { Nav } from "react-bootstrap"
+import { Form, Button, Row, Col } from "react-bootstrap"
+import { useDispatch, useSelector } from "react-redux"
+import Loader from "../components/Loader"
+import FormContainer from "../components/FormContainer"
 
-import { useRegisterMutation } from "../../slices/usersApiSlice"
-import { setCredentials } from "../../slices/authSlice"
+import { useRegisterMutation } from "../slices/usersApiSlice"
+import { setCredentials } from "../slices/authSlice"
 import { toast } from "react-toastify"
 
 const RegisterScreen = () => {
-  const [username, setUsername] = useState("")
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
 
@@ -39,7 +41,7 @@ const RegisterScreen = () => {
       toast.error("Passwords do not match")
     } else {
       try {
-        const res = await register({ username, password }).unwrap()
+        const res = await register({ name, email, password }).unwrap()
         dispatch(setCredentials({ ...res }))
         navigate(redirect)
       } catch (err) {
@@ -80,12 +82,21 @@ const RegisterScreen = () => {
                 </Col>
               </Row>
               <Form.Group className="my-2" controlId="name">
-                <Form.Label>Username</Form.Label>
+                <Form.Label>Name</Form.Label>
+                <Form.Control
+                  type="name"
+                  placeholder="Enter name"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                ></Form.Control>
+              </Form.Group>
+              <Form.Group className="my-2" controlId="email">
+                <Form.Label>Email</Form.Label>
                 <Form.Control
                   type="email"
-                  placeholder="Enter username"
-                  value={username}
-                  onChange={e => setUsername(e.target.value)}
+                  placeholder="Enter email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
                 ></Form.Control>
               </Form.Group>
 

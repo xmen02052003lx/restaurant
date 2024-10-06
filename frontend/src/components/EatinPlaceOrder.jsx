@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { toast } from "react-toastify"
 import { Button, Row, Col, ListGroup, Image, Card } from "react-bootstrap"
 import { useDispatch, useSelector } from "react-redux"
@@ -9,6 +9,7 @@ import Loader from "../components/Loader"
 
 const PlaceOrder = ({ checkinUrl }) => {
   // const [pickupDish, { isLoading: loadingPickup }] = usePickupDishMutation()
+  const { id: tableId } = useParams()
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -47,7 +48,7 @@ const PlaceOrder = ({ checkinUrl }) => {
     return new Intl.NumberFormat("vi-VN").format(price) + " đ"
   }
   const checkoutHandler = () => {
-    navigate("/login?redirect=/shipping")
+    navigate(`/eatin/placeorder/${tableId}`)
   }
 
   return (
@@ -106,7 +107,7 @@ const PlaceOrder = ({ checkinUrl }) => {
                 onClick={checkoutHandler}
                 disabled={cart.cartItems.length == 0}
               >
-                Tiến hành thanh toán
+                Đặt Món
               </Button>
             </Row>
           </ListGroup.Item>

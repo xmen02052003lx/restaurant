@@ -14,7 +14,12 @@ const restaurantSchema = mongoose.Schema(
     openTime: String,
     closeTime: String,
     description: String,
-    images: [],
+    phone: String,
+    email: String,
+    image: {
+      data: String,
+      contentType: String
+    },
     tableCount: Number
   },
   {
